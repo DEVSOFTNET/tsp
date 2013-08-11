@@ -6,12 +6,12 @@
 	<groupId>org.saiko</groupId>
 	<artifactId>tsp</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<organization>
-  		<name>hijex.com</name>
+		<name>hijex.com</name>
 	</organization>
 
-	<version>3.0-8-g0b0e432</version>
+	<version>1.0</version>
 	<name>tsp</name>
 	<url>http://fd.cvut.cz</url>
 
@@ -20,8 +20,19 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
-	<!-- In Project repository -->
 	<dependencies>
+		<dependency>
+			<groupId>com.lowagie</groupId>
+			<artifactId>itext</artifactId>
+			<version>2.1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
@@ -100,5 +111,6 @@
 					</archive>
 				</configuration>
 			</plugin>
+		</plugins>
 	</build>
 </project>

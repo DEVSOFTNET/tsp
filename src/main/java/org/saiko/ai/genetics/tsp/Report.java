@@ -1,47 +1,18 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/Report.java,v $
- * $Id: Report.java,v 1.4 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.4 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: Report.java,v $
- * Revision 1.4  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.3  2005/08/13 14:41:35  dsaiko
- * *** empty log message ***
- *
- * Revision 1.2  2005/08/13 12:53:02  dsaiko
- * XML2PDF report finished
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import sun.misc.BASE64Encoder;
-import com.lowagie.text.Anchor;
+
 import com.lowagie.text.Chunk;
 import com.lowagie.text.Document;
 import com.lowagie.text.Element;
@@ -61,16 +32,12 @@ import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
+ * @author dusan.saiko@gmail.com
  * 
  * TSP Application PDF report using iText library
  */
 class Report extends PdfPageEventHelper
 {
-   /** String containing the CVS revision. **/
-   public final static String CVS_REVISION = "$Revision: 1.4 $";
-   
    /** 
     * computation time constant key
     * @see #saveReport(File, City[], BufferedImage, Map, Map)
@@ -105,164 +72,166 @@ class Report extends PdfPageEventHelper
         Document document = new Document(PageSize.A4,40,40,170,60);
 
         //create PdfWriter to file
-        PdfWriter writer=PdfWriter.getInstance(document, new FileOutputStream(file));
-
-        //handle document events so headers/footers can be written
-        writer.setPageEvent(this);
         
-        document.open();
+        PdfWriter writer= null;
 
-        //add application information read from parameters map
-        document.add(new Chunk("\n"));
-        PdfPTable mapInfo = new PdfPTable(1);
-        {
-           mapInfo.getDefaultCell().setBorderWidth(0);
-           
-           Paragraph header=new Paragraph("Result information\n\n",new Font(Font.HELVETICA, 14, Font.BOLDITALIC));
-           PdfPCell cell = new PdfPCell(header);
-           cell.setColspan(1);
-           cell.setBorderWidth(0);
-           mapInfo.addCell(cell);
-           
-           PdfPTable subTable = new PdfPTable(1);
-           subTable.getDefaultCell().setBorderWidth(0);
-           
-           Paragraph p=new Paragraph();
-           Font f=new Font(Font.COURIER,12);
-
-           Iterator iterator=params.keySet().iterator();
-           while(iterator.hasNext()) {
-              String key=(String)iterator.next();
-              String name=key+":";
-              while(name.length()<23) name+=" ";
-              p.add(new Chunk(" "+name+params.get(key)+"\n",f));
-           }           
-           
-           subTable.addCell(p);
-           mapInfo.addCell(subTable);
-           mapInfo.setWidthPercentage(100);
-           document.add(mapInfo);
-        }
-        
-        //add system information
-        PdfPTable systemInfo = new PdfPTable(1);
-        {
-           systemInfo.getDefaultCell().setBorderWidth(0);
-           
-           Paragraph header=new Paragraph("\n\nSystem information\n\n",new Font(Font.HELVETICA, 14, Font.BOLDITALIC));
-           PdfPCell cell = new PdfPCell(header);
-           cell.setColspan(1);
-           cell.setBorderWidth(0);
-           systemInfo.addCell(cell);
-           
-           PdfPTable subTable = new PdfPTable(1);
-           subTable.getDefaultCell().setBorderWidth(0);
-           
-           Paragraph p=new Paragraph();
-           Font f=new Font(Font.COURIER,12);
-           
-           Iterator iterator=systemProperties.keySet().iterator();
-           while(iterator.hasNext()) {
-              String key=(String)iterator.next();
-              String name=key+":";
-              while(name.length()<23) name+=" ";
-              p.add(new Chunk(" "+name+systemProperties.get(key)+"\n",f));
-           }
-           
-           subTable.addCell(p);
-           systemInfo.addCell(subTable);
-           systemInfo.setWidthPercentage(100);
-           document.add(systemInfo);
-        }
-
-        document.setMargins(40,40,30,30);
-        document.setPageSize(PageSize.A4.rotate());
-        document.newPage();
-        
-        if(image!=null) {
-        	Image img=Image.getInstance(image,null);
-        	img.setAlignment(Element.ALIGN_CENTER);
-        	document.add(img);
-        }
-
-        document.setMargins(40,40,170,60);
-        document.setPageSize(PageSize.A4);
-        document.newPage();
-        
-        //list table with the path through the cities and distances between them
-        document.add(new Paragraph("Salesman path\n\n",new Font(Font.HELVETICA, 14, Font.BOLDITALIC)));
-
-        //create font for header and cities.
-        //TODO: how to create unicode font without having to transfer .ttf file ?
-        Font tableHeaderFont=new Font(BaseFont.createFont(
-              BaseFont.HELVETICA,
-              BaseFont.CP1250,
-              BaseFont.EMBEDDED),
-              12, Font.BOLD);
-        
-        //create tabe and set properties
-        PdfPTable datatable = new PdfPTable(6);
-        int headerwidths[] = { 5, 31, 16, 16, 16, 16}; // percentage
-        datatable.setWidths(headerwidths);
-        datatable.setWidthPercentage(100); // percentage
-        datatable.getDefaultCell().setPadding(2);
-        datatable.getDefaultCell().setBorderWidth(1);
-        datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
-
-        //header row
-        PdfPCell c1=new PdfPCell(new Phrase("City",tableHeaderFont));
-        c1.setColspan(2);
-        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-        c1.setVerticalAlignment(Element.ALIGN_CENTER);
-        
-        datatable.addCell(c1);
-        datatable.addCell(new Phrase("X\n(S-JTSK)",tableHeaderFont));
-        datatable.addCell(new Phrase("Y\n(S-JTSK)",tableHeaderFont));
-        datatable.addCell(new Phrase("Distance\n[m]",tableHeaderFont));
-        datatable.addCell(new Phrase("Total\n[m]",tableHeaderFont));
-        datatable.setHeaderRows(1); // this is the end of the table header
-
-        //create fixed with font for numbers
-        Font numberFont=new Font(Font.COURIER, 11);
-
-        
-        //compute the distance between two cities and total distance
-        double totalDistance=0;
-        for (int i = 0; i < cities.length; i++) {
-           //grey each second line
-            if (i % 2 == 1) {
-                datatable.getDefaultCell().setGrayFill(0.97f);
+        try(FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            writer = PdfWriter.getInstance(document, fileOutputStream);
+            //handle document events so headers/footers can be written
+            writer.setPageEvent(this);
+            
+            document.open();
+    
+            //add application information read from parameters map
+            document.add(new Chunk("\n"));
+            PdfPTable mapInfo = new PdfPTable(1);
+            {
+               mapInfo.getDefaultCell().setBorderWidth(0);
+               
+               Paragraph header=new Paragraph("Result information\n\n",new Font(Font.HELVETICA, 14, Font.BOLDITALIC));
+               PdfPCell cell = new PdfPCell(header);
+               cell.setColspan(1);
+               cell.setBorderWidth(0);
+               mapInfo.addCell(cell);
+               
+               PdfPTable subTable = new PdfPTable(1);
+               subTable.getDefaultCell().setBorderWidth(0);
+               
+               Paragraph p=new Paragraph();
+               Font f=new Font(Font.COURIER,12);
+    
+               Iterator<String> iterator=params.keySet().iterator();
+               while(iterator.hasNext()) {
+                  String key = iterator.next();
+                  String name = key+":";
+                  while(name.length()<23) name+=" ";
+                  p.add(new Chunk(" "+name+params.get(key)+"\n",f));
+               }           
+               
+               subTable.addCell(p);
+               mapInfo.addCell(subTable);
+               mapInfo.setWidthPercentage(100);
+               document.add(mapInfo);
             }
-
-            datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
-            datatable.addCell(new Phrase(numberFormatter.format(i+1),numberFont));
-            datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
-            datatable.addCell(new Phrase(cities[i].getName(),tableHeaderFont));
-            datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
-            datatable.addCell(new Phrase(numberFormatter.format(cities[i].getSJTSKX()),numberFont));
-            datatable.addCell(new Phrase(numberFormatter.format(cities[i].getSJTSKY()),numberFont));
-            String distanceText="0";
-            String totalDistanceText="0";
-            double distance=0;
-            if(i>0) {
-            	if(i==49) {
-            		int ii=0;
-            		ii++;
-            	}
-               distance=cities[i].distance(cities[i-1],false);
-               distanceText=numberFormatter.format((int)distance);
-               totalDistance+=distance;
-               totalDistanceText=numberFormatter.format((int)totalDistance);
+            
+            //add system information
+            PdfPTable systemInfo = new PdfPTable(1);
+            {
+               systemInfo.getDefaultCell().setBorderWidth(0);
+               
+               Paragraph header=new Paragraph("\n\nSystem information\n\n",new Font(Font.HELVETICA, 14, Font.BOLDITALIC));
+               PdfPCell cell = new PdfPCell(header);
+               cell.setColspan(1);
+               cell.setBorderWidth(0);
+               systemInfo.addCell(cell);
+               
+               PdfPTable subTable = new PdfPTable(1);
+               subTable.getDefaultCell().setBorderWidth(0);
+               
+               Paragraph p=new Paragraph();
+               Font f=new Font(Font.COURIER,12);
+               
+               Iterator<String> iterator=systemProperties.keySet().iterator();
+               while(iterator.hasNext()) {
+                  String key = iterator.next();
+                  String name=key+":";
+                  while(name.length()<23) name+=" ";
+                  p.add(new Chunk(" "+name+systemProperties.get(key)+"\n",f));
+               }
+               
+               subTable.addCell(p);
+               systemInfo.addCell(subTable);
+               systemInfo.setWidthPercentage(100);
+               document.add(systemInfo);
             }
-            datatable.addCell(new Phrase(distanceText,numberFont));
-            datatable.addCell(new Phrase(totalDistanceText,numberFont));
-
-            //switch of gray colour
-            datatable.getDefaultCell().setGrayFill(0.0f);
-        }
-        document.add(datatable);
-
-        document.close();
+    
+            document.setMargins(40,40,30,30);
+            document.setPageSize(PageSize.A4.rotate());
+            document.newPage();
+            
+            if(image!=null) {
+            	Image img=Image.getInstance(image,null);
+            	img.setAlignment(Element.ALIGN_CENTER);
+            	document.add(img);
+            }
+    
+            document.setMargins(40,40,170,60);
+            document.setPageSize(PageSize.A4);
+            document.newPage();
+            
+            //list table with the path through the cities and distances between them
+            document.add(new Paragraph("Salesman path\n\n",new Font(Font.HELVETICA, 14, Font.BOLDITALIC)));
+    
+            //create font for header and cities.
+            Font tableHeaderFont=new Font(BaseFont.createFont(
+                  BaseFont.HELVETICA,
+                  BaseFont.CP1250,
+                  BaseFont.EMBEDDED),
+                  12, Font.BOLD);
+            
+            //create tabe and set properties
+            PdfPTable datatable = new PdfPTable(6);
+            int headerwidths[] = { 5, 31, 16, 16, 16, 16}; // percentage
+            datatable.setWidths(headerwidths);
+            datatable.setWidthPercentage(100); // percentage
+            datatable.getDefaultCell().setPadding(2);
+            datatable.getDefaultCell().setBorderWidth(1);
+            datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
+    
+            //header row
+            PdfPCell c1=new PdfPCell(new Phrase("City",tableHeaderFont));
+            c1.setColspan(2);
+            c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+            c1.setVerticalAlignment(Element.ALIGN_CENTER);
+            
+            datatable.addCell(c1);
+            datatable.addCell(new Phrase("X\n(S-JTSK)",tableHeaderFont));
+            datatable.addCell(new Phrase("Y\n(S-JTSK)",tableHeaderFont));
+            datatable.addCell(new Phrase("Distance\n[m]",tableHeaderFont));
+            datatable.addCell(new Phrase("Total\n[m]",tableHeaderFont));
+            datatable.setHeaderRows(1); // this is the end of the table header
+    
+            //create fixed with font for numbers
+            Font numberFont=new Font(Font.COURIER, 11);
+    
+            
+            //compute the distance between two cities and total distance
+            double totalDistance=0;
+            for (int i = 0; i < cities.length; i++) {
+               //grey each second line
+                if (i % 2 == 0) {
+                    datatable.getDefaultCell().setGrayFill(0.97f);
+                } else {
+                    datatable.getDefaultCell().setGrayFill(0.9f);
+                }
+    
+                datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
+                datatable.addCell(new Phrase(numberFormatter.format(i+1),numberFont));
+                datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
+                datatable.addCell(new Phrase(cities[i].getName(),tableHeaderFont));
+                datatable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
+                datatable.addCell(new Phrase(numberFormatter.format(cities[i].getSJTSKX()),numberFont));
+                datatable.addCell(new Phrase(numberFormatter.format(cities[i].getSJTSKY()),numberFont));
+                String distanceText="0";
+                String totalDistanceText="0";
+                double distance=0;
+                if(i>0) {
+                   distance=cities[i].distance(cities[i-1],false);
+                   distanceText=numberFormatter.format((int)distance);
+                   totalDistance+=distance;
+                   totalDistanceText=numberFormatter.format((int)totalDistance);
+                }
+                datatable.addCell(new Phrase(distanceText,numberFont));
+                datatable.addCell(new Phrase(totalDistanceText,numberFont));
+    
+                //switch of gray colour
+                datatable.getDefaultCell().setGrayFill(0.0f);
+            }
+            document.add(datatable);
+    
+            document.close();
+            writer.flush();
+        } 
     }
     
 
@@ -287,10 +256,8 @@ class Report extends PdfPageEventHelper
        try {
           headerFont = BaseFont.createFont("Helvetica", BaseFont.WINANSI, false);
 
-          String projectURL="http://www.saiko.cz/ai/tsp/";
-          
           // initialization of the header table
-           headerImage = Image.getInstance(getClass().getResource("/org/saiko/etc/logo2.jpg"));
+           headerImage = Image.getInstance(getClass().getResource("/logo2.jpg"));
            headerTable=new PdfPTable(1);
            PdfPTable table = new PdfPTable(2);
            
@@ -299,9 +266,6 @@ class Report extends PdfPageEventHelper
            
            p.add(new Chunk("Traveling Salesman Problem\n", new Font(Font.HELVETICA, 16, Font.BOLDITALIC, Color.blue)));
            p.add(new Chunk("Application report\n\n", new Font(Font.HELVETICA, 12, Font.NORMAL)));
-           Anchor link = new Anchor(projectURL, new Font(Font.HELVETICA, 11, Font.NORMAL));
-           link.setReference(projectURL);
-           p.add(link);
 
            p.add(new Chunk("\n\n"+parameters.get(PARAM_COMPUTATION_TIME)+"\n", new Font(Font.HELVETICA, 11, Font.NORMAL)));
            
@@ -335,8 +299,8 @@ class Report extends PdfPageEventHelper
        cb.saveState();
        // write the headertable
        if(writer.getPageNumber()!=2) {
-          headerTable.setTotalWidth(document.getPageSize().width() - 60);
-          headerTable.writeSelectedRows(0, -1, 30, document.getPageSize().top()-30, cb);
+          headerTable.setTotalWidth(document.getPageSize().getWidth() - 60);
+          headerTable.writeSelectedRows(0, -1, 30, document.getPageSize().getTop()-30, cb);
        }
        // compose the footer
        String text = "page " + writer.getPageNumber() + " of ";
@@ -351,10 +315,9 @@ class Report extends PdfPageEventHelper
        cb.endText();
        cb.addTemplate(tpl, document.right() - adjust, textBase);
 
-       cb.saveState();
        // draw a Rectangle around the page
        cb.setLineWidth(1);
-       cb.rectangle(30, 30, document.getPageSize().width() - 60, document.getPageSize().height() - 60);
+       cb.rectangle(30, 30, document.getPageSize().getWidth() - 60, document.getPageSize().getHeight() - 60);
        cb.stroke();
        cb.restoreState();
    }
@@ -377,7 +340,7 @@ class Report extends PdfPageEventHelper
     * @return map of system properties for creating report
     */
    protected static Map<String,String> getSystemProperties() {
-      Map<String,String> p=new LinkedHashMap<String,String>();
+      Map<String,String> p=new LinkedHashMap<>();
       
       p.put("availableProcessors",String.valueOf(Runtime.getRuntime().availableProcessors()));
       p.put("freeMemory",numberFormatter.format(Runtime.getRuntime().freeMemory()));
@@ -417,13 +380,12 @@ class Report extends PdfPageEventHelper
     * @return map of result properties
     */
    protected static Map<String,String> getResultInfo(TSP tsp) {
-      Map<String,String> p=new LinkedHashMap<String,String>();
+      Map<String,String> p=new LinkedHashMap<>();
       
       p.put(Report.PARAM_COMPUTATION_TIME,new SimpleDateFormat("yyyy/MM/dd HH:mm").format(Calendar.getInstance().getTime()));
-      p.put("Program version",TSP.getAppVersion());
+      p.put("Program version", AppVersion.getAppVersion(TSP.class));
       p.put("TSPEngine",tsp.engineName);
       p.put("Map file",tsp.mapFile);
-      p.put("Map file hash",getMapHash(tsp.mapFile));
       p.put("Number of cities",Report.numberFormatter.format(tsp.cities.length));
       p.put("Init. population size",Report.numberFormatter.format(tsp.configuration.initialPopulationSize));
       p.put("Population growth",Report.numberFormatter.format(tsp.configuration.populationGrow));
@@ -439,27 +401,5 @@ class Report extends PdfPageEventHelper
       
       return p;
    }   
-   
-   /**
-    * Create hash for map file
-    * @param mapFile
-    * @return SHA hash of map file converted into BASE64 encoding
-    */
-  protected static String getMapHash(String mapFile) {
-     InputStream i=new Object().getClass().getResourceAsStream("/org/saiko/ai/genetics/tsp/etc/"+mapFile+".csv");
-     if(i==null) return null;
-     try {
-        byte b[]=new byte[1024];
-        int size;
-        ByteArrayOutputStream buffer=new ByteArrayOutputStream();
-        while((size=i.read(b))>0) {
-           buffer.write(b,0,size);
-        }
-        i.close();
-        MessageDigest digest=MessageDigest.getInstance("SHA");
-        return new BASE64Encoder().encode(digest.digest(buffer.toByteArray()));
-     } catch(Throwable e) {
-        return null;
-     }
-  }   
+  
 }

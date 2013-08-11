@@ -1,34 +1,11 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/TSPChromosome.java,v $
- * $Id: TSPChromosome.java,v 1.3 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.3 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: TSPChromosome.java,v $
- * Revision 1.3  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.2  2005/08/13 12:53:02  dsaiko
- * XML2PDF report finished
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp;
 
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
+ * @author dusan.saiko@gmail.com
  * 
  * TSPChromosome of the traveling salesman problem.
  * The chromosome represents ordered array of cities and have some
@@ -37,9 +14,6 @@ package org.saiko.ai.genetics.tsp;
 
 public class TSPChromosome {
 
-   /** String containing the CVS revision. **/
-   public final static String CVS_REVISION = "$Revision: 1.3 $";
-   
    /**
     * ordered array of cities
     */

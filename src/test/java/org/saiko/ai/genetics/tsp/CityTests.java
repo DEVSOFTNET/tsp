@@ -1,44 +1,16 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/CityTests.java,v $
- * $Id: CityTests.java,v 1.2 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.2 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: CityTests.java,v $
- * Revision 1.2  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.1  2005/08/12 23:52:57  dsaiko
- * Initial revision created
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp;
 
 import junit.framework.TestCase;
 
 /**
  * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
- *
  * City TestCase
  * @see org.saiko.ai.genetics.tsp.City
  */
 public class CityTests extends TestCase {
-
-   /** String containing the CVS revision. **/
-   public final static String CVS_REVISION = "$Revision: 1.2 $";
-   
 
    /**
     * Test routine

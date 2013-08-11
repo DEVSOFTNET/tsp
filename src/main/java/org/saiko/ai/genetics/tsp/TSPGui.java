@@ -1,49 +1,6 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/TSPGui.java,v $
- * $Id: TSPGui.java,v 1.2 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.2 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: TSPGui.java,v $
- * Revision 1.2  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.1  2005/08/23 10:01:31  dsaiko
- * Gui and main program divided
- *
- * Revision 1.8  2005/08/22 22:25:11  dsaiko
- * Packages rearanged
- *
- * Revision 1.7  2005/08/22 22:13:53  dsaiko
- * Packages rearanged
- *
- * Revision 1.6  2005/08/22 22:08:51  dsaiko
- * Created engines with heuristics
- *
- * Revision 1.5  2005/08/13 15:02:49  dsaiko
- * build task
- *
- * Revision 1.4  2005/08/13 15:02:09  dsaiko
- * build task
- *
- * Revision 1.3  2005/08/13 14:41:35  dsaiko
- * *** empty log message ***
- *
- * Revision 1.2  2005/08/13 12:53:02  dsaiko
- * XML2PDF report finished
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp;
 
 import java.awt.Color;
@@ -63,16 +20,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
+ * @author dusan.saiko@gmail.com
  *
  * GUI for representation of the traveling salesman problem.
  */
 public class TSPGui extends JFrame {
 
-   /** String containing the CVS revision. **/
-   public final static String CVS_REVISION = "$Revision: 1.2 $";
-   
    /**
     * generated serialVersionUID
     */
@@ -181,8 +134,8 @@ public class TSPGui extends JFrame {
    public void init() {
 	  menu=new TSPMenu(parent);
 	   
-	  setIconImage(new ImageIcon(this.getClass().getResource("/org/saiko/etc/logo16.gif")).getImage());
-	  setTitle(appTitle);
+	  setIconImage(new ImageIcon(this.getClass().getResource("/logo16.gif")).getImage());
+	  setTitle(appTitle+" v " + AppVersion.getAppVersion(this.getClass()));
 	      
       //window properties
       setSize(windowSize);

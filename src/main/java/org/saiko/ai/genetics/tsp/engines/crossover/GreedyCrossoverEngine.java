@@ -1,45 +1,17 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/engines/crossover/GreedyCrossoverEngine.java,v $
- * $Id: GreedyCrossoverEngine.java,v 1.3 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.3 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: GreedyCrossoverEngine.java,v $
- * Revision 1.3  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.2  2005/08/22 22:13:53  dsaiko
- * Packages rearanged
- *
- * Revision 1.1  2005/08/22 22:08:51  dsaiko
- * Created engines with heuristics
- *
- * Revision 1.1  2005/08/13 15:02:09  dsaiko
- * build task
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp.engines.crossover;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import org.saiko.ai.genetics.tsp.City;
 import org.saiko.ai.genetics.tsp.TSPChromosome;
 import org.saiko.ai.genetics.tsp.engines.simpleUnisexMutatorHibrid2Opt.SimpleUnisexMutatorHibrid2OptEngine;
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
+ * @author dusan.saiko@gmail.com
  * 
  * Extends the SimpleUnisexMutatorEngine by providing new method for getting childs
  * to new population.
@@ -53,11 +25,6 @@ import org.saiko.ai.genetics.tsp.engines.simpleUnisexMutatorHibrid2Opt.SimpleUni
  * @see org.saiko.ai.genetics.tsp.TSPEngine
  */
 public class GreedyCrossoverEngine extends SimpleUnisexMutatorHibrid2OptEngine {
-
-   /** String containing the CVS revision. **/
-   @SuppressWarnings("hiding")
-   public final static String  CVS_REVISION = "$Revision: 1.3 $";
-
 
    /**
     * Create childs from the bestCount elements of population
@@ -122,15 +89,15 @@ public class GreedyCrossoverEngine extends SimpleUnisexMutatorHibrid2OptEngine {
     * @param chromosome2 - second chromosome
     * @return newly ordered array of cities (=child =new chromosome)
     */
-   protected City[] haveSex(TSPChromosome chromosome1, TSPChromosome chromosome2) {
+   static protected City[] haveSex(TSPChromosome chromosome1, TSPChromosome chromosome2) {
       
      City[] c1=chromosome1.getCities();
      City[] c2=chromosome2.getCities();
       
      int n = c1.length;
 
-     LinkedList<City> out = new LinkedList<City>();
-     LinkedList<City> not_picked = new LinkedList<City>();
+     LinkedList<City> out = new LinkedList<>();
+     LinkedList<City> not_picked = new LinkedList<>();
 
      out.add(c1[0]);
      for (int j = 1; j < n; j++) { // g[0] picked
@@ -179,14 +146,14 @@ public class GreedyCrossoverEngine extends SimpleUnisexMutatorHibrid2OptEngine {
      out.add(not_picked.getLast());
 
      City[] c = new City[n];
-     Iterator gi = out.iterator();
+     Iterator<City> gi = out.iterator();
 
      for (int i = 0; i < 0; i++) {
        c[i] = c1[i];
      }
 
      for (int i = 0; i < c.length; i++) {
-       c[i] = (City) gi.next();
+       c[i] = gi.next();
      }
 
      return c;
@@ -200,7 +167,7 @@ public class GreedyCrossoverEngine extends SimpleUnisexMutatorHibrid2OptEngine {
     * @param x - city for which we are looking for the next path 
     * @return next city to go from the chromosome
     */
-   protected City findNext(City[] cities, City x) {
+   static protected City findNext(City[] cities, City x) {
      for (int i = 0; i < cities.length - 1; i++) {
        if (cities[i].equals(x))
          return cities[i + 1];

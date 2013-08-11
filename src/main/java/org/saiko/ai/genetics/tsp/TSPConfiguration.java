@@ -1,42 +1,16 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/TSPConfiguration.java,v $
- * $Id: TSPConfiguration.java,v 1.3 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.3 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: TSPConfiguration.java,v $
- * Revision 1.3  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.2  2005/08/22 22:08:51  dsaiko
- * Created engines with heuristics
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp;
 
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
+ * @author dusan.saiko@gmail.com
  * 
  * TSPConfiguration specifies the configuration parameters of the application
  */
 public class TSPConfiguration {
 
-   /** String containing the CVS revision. **/
-   public final static String CVS_REVISION = "$Revision: 1.3 $";
-   
    /**
     * Antialiasing flag for graphics rendering.
     * Slows the displaying quite a lot.
@@ -46,7 +20,7 @@ public class TSPConfiguration {
    /**
     * Initial population count which is set to the computation engine.
     */
-   protected int initialPopulationSize=100;
+   protected int initialPopulationSize=1000;
    
    /**
     * Computation thread priority
@@ -63,7 +37,7 @@ public class TSPConfiguration {
    /**
     * Ratio (0..1), how much the population should undergo random mutation 
     */
-   protected double mutationRatio=0.5;
+   protected double mutationRatio=0.25;
    
    /**
     * The count of generation which give the same best result after which the program should stop

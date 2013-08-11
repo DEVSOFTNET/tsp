@@ -1,49 +1,8 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/TSPMenu.java,v $
- * $Id: TSPMenu.java,v 1.9 2005/08/23 23:18:05 dsaiko Exp $
- * $Date: 2005/08/23 23:18:05 $
- * $Revision: 1.9 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: TSPMenu.java,v $
- * Revision 1.9  2005/08/23 23:18:05  dsaiko
- * Finished.
- *
- * Revision 1.8  2005/08/23 12:45:50  dsaiko
- * console file replacement dialog was shown
- *
- * Revision 1.7  2005/08/23 10:17:43  dsaiko
- * Gui and main program divided
- *
- * Revision 1.6  2005/08/23 10:01:31  dsaiko
- * Gui and main program divided
- *
- * Revision 1.5  2005/08/22 22:08:51  dsaiko
- * Created engines with heuristics
- *
- * Revision 1.4  2005/08/13 15:44:26  dsaiko
- * build task finished
- *
- * Revision 1.3  2005/08/13 14:41:35  dsaiko
- * *** empty log message ***
- *
- * Revision 1.2  2005/08/13 12:53:02  dsaiko
- * XML2PDF report finished
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -52,12 +11,10 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -69,24 +26,16 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.saiko.ai.genetics.tsp.engines.jgapCrossover.JGapGreedyCrossoverEngine;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -95,16 +44,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:05 $
+ * @author dusan.saiko@gmail.com
  *
  * GUI menu definition and actions for TSP
  */
 public class TSPMenu {
 
-   /** String containing the CVS revision. **/
-   public final static String CVS_REVISION = "$Revision: 1.9 $";
-   
    /**
     * Parent TSP Gui instance 
     */
@@ -162,12 +107,6 @@ public class TSPMenu {
    protected final JMenu menuGraphics=new JAntialiasedMenu();
    /** menu item **/
    protected final JCheckBoxMenuItem menuItemAntialiasing=new JAntialiasedCheckBoxMenuItem();
-
-
-   /** menu HELP **/
-   protected final JMenu menuHelp=new JAntialiasedMenu();
-   /** menu item **/
-   protected final JMenuItem menuItemAbout=new JAntialiasedMenuItem();
 
 
    /** menu PRIORITY **/
@@ -272,14 +211,6 @@ public class TSPMenu {
          setMenuGraphicsActionListeners();
       }
       
-      menuBar.add(menuHelp);
-      {
-         menuHelp.add(menuItemAbout);
-         
-         setMenuHelpActionListeners();
-      }
-
-
       //set font for all menus
       Component components[]=menuBar.getComponents();
       for(Component c:components) {
@@ -331,10 +262,7 @@ public class TSPMenu {
       {
          menuItemAntialiasing.setText("Antialiasing");
       }
-      menuHelp.setText("Help");
-      {
-         menuItemAbout.setText("About application");
-      }
+
       menuPriority.setText("Priority");
       {
          menuItemPriorityHighest.setText("Highest");
@@ -375,13 +303,12 @@ public class TSPMenu {
       ButtonGroup group=new ButtonGroup();
       
       //add all engines
-      for(Class e: TSP.engineClasses) {
-         final Class engineClass=e;
+      for(Class<TSPEngine> e: TSP.engines) {
          JRadioButtonMenuItem menu=new JAntialiasedRadioButtonMenuItem();
          String menuText=e.getSimpleName();
          menu.setText(menuText);
          //client property - engine class
-         menu.putClientProperty(menuText,engineClass);
+         menu.putClientProperty(menuText,e);
          if(parent.engineClass.equals(e)) {
             menu.setSelected(true);
          }
@@ -397,22 +324,17 @@ public class TSPMenu {
    protected void setMenuEnginesActionListeners() {
       for(Component m: menuEngine.getMenuComponents()) {
          ((JMenuItem)m).addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
+            @Override
+	    public void actionPerformed(ActionEvent e) {
                menuItemPDFReport.setEnabled(false);
                menuItemXMLReport.setEnabled(false);
             	
                JMenuItem menu=((JMenuItem)e.getSource());
-               Class engineClass=(Class)menu.getClientProperty(menu.getText());
+               Class<TSPEngine> engineClass=(Class<TSPEngine>)menu.getClientProperty(menu.getText());
                
                parent.engineClass=engineClass;
                
-               //JGap does not support populationGrow 
-               //(or may be it does, but I do not use it)
-               if(engineClass.equals(JGapGreedyCrossoverEngine.class)) {
-                  menuItemPopulationGrow.setVisible(false);
-               } else {
-                  menuItemPopulationGrow.setVisible(true);
-               }
+               menuItemPopulationGrow.setVisible(true);
             }
          });
       }
@@ -423,35 +345,40 @@ public class TSPMenu {
     */
    protected void setMenuPriorityActionListeners() {
       menuItemPriorityHighest.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             parent.configuration.setThreadPriority(10);
             if(parent.runingThread!=null) {
                parent.runingThread.setPriority(parent.configuration.getThreadPriority());
             }
          }});
       menuItemPriorityHigh.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             parent.configuration.setThreadPriority(7);
             if(parent.runingThread!=null) {
                parent.runingThread.setPriority(parent.configuration.getThreadPriority());
             }
          }});
       menuItemPriorityNormal.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             parent.configuration.setThreadPriority(5);
             if(parent.runingThread!=null) {
                parent.runingThread.setPriority(parent.configuration.getThreadPriority());
             }
          }});
       menuItemPriorityLo.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             parent.configuration.setThreadPriority(3);
             if(parent.runingThread!=null) {
                parent.runingThread.setPriority(parent.configuration.getThreadPriority());
             }
          }});
       menuItemPriorityLowest.addActionListener(new ActionListener(){
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             parent.configuration.setThreadPriority(1);
             if(parent.runingThread!=null) {
                parent.runingThread.setPriority(parent.configuration.getThreadPriority());
@@ -480,7 +407,7 @@ public class TSPMenu {
     * Menu item action
     * @param e
     */
-   protected void actionPause(@SuppressWarnings("unused") ActionEvent e) {
+   protected void actionPause(ActionEvent e) {
       if(parent.pauseRequestFlag) {
          //continue
          parent.pauseRequestFlag=false;
@@ -500,7 +427,7 @@ public class TSPMenu {
     * Menu item action
     * @param e
     */   
-   protected void actionStart(@SuppressWarnings("unused") ActionEvent e) {
+   protected void actionStart(ActionEvent e) {
       if(parent.startedFlag==false) {
          //start
          enableMenus(false);
@@ -514,7 +441,8 @@ public class TSPMenu {
          //create computation thread
          parent.runingThread=new Thread(
                new Runnable() {
-                  public void run() {
+                  @Override
+		public void run() {
                      parent.run();
                   }
                }
@@ -539,7 +467,7 @@ public class TSPMenu {
     * @param value
     * @return aligned text
     */
-   protected String alignText(String str, Object value) {
+   static protected String alignText(String str, Object value) {
       String str2=value.toString();
       //align text label 
       while(str.length()<20) {
@@ -718,7 +646,7 @@ public class TSPMenu {
     * Saves/export all available maps into .zip file.
     * @param e
     */
-   protected void actionExportMaps(@SuppressWarnings("unused") ActionEvent e) {
+   protected void actionExportMaps(ActionEvent e) {
      JFileChooser fileChooser=new JFileChooser();
 
      if(mapsPrevDir==null) {
@@ -765,25 +693,26 @@ public class TSPMenu {
            }
            
            //zip all maps
-           ZipOutputStream zip=new ZipOutputStream(new FileOutputStream(f));
-           zip.setLevel(9);
-           for(String mapName:TSP.mapFiles) {
-        	   if(mapName!=null) {
-	              InputStream i=new Object().getClass().getResourceAsStream("/org/saiko/ai/genetics/tsp/etc/"+mapName+".csv");
-	              if(i!=null) {
-	                 ZipEntry zipEntry=new ZipEntry(mapName+".csv");
-	                 zip.putNextEntry(zipEntry);
-	                 byte b[]=new byte[1024];
-	                 int size;
-	                 while((size=i.read(b))>0) {
-	                    zip.write(b,0,size);
-	                 }
-	                 zip.closeEntry();
-	              }
-	              i.close();
-        	   }
+           try (ZipOutputStream zip=new ZipOutputStream(new FileOutputStream(f))) {
+               zip.setLevel(9);
+               for(String mapName:TSP.mapFiles) {
+            	   if(mapName!=null) {
+            	       try (InputStream mapInputStream = new Object().getClass().getResourceAsStream("/"+mapName+".csv")) {
+        	              if(mapInputStream != null) {
+        	                 ZipEntry zipEntry=new ZipEntry(mapName+".csv");
+        	                 zip.putNextEntry(zipEntry);
+        	                 byte b[]=new byte[1024];
+        	                 int size;
+        	                 while((size= mapInputStream.read(b))>0) {
+        	                    zip.write(b,0,size);
+        	                 }
+        	                 zip.closeEntry();
+        	              }
+            	       }
+            	   }
+               }
            }
-           zip.close();
+           
            JOptionPane.showMessageDialog(parent.gui,"OK, maps exported to the file: \n"+f,"Info",JOptionPane.INFORMATION_MESSAGE);
         } catch(Throwable ex) {
            ex.printStackTrace();
@@ -804,7 +733,7 @@ public class TSPMenu {
    * were not working there (in general).
    * @param e
    */
-  protected void actionPDFReport(@SuppressWarnings("unused") ActionEvent e) {
+  protected void actionPDFReport(ActionEvent e) {
      JFileChooser fileChooser=new JFileChooser();
 
      if(reportPrevDir==null) {
@@ -899,8 +828,8 @@ public class TSPMenu {
            cities2[cities.length]=cities2[0];
            
            //create report
-           new Report().saveReport(filePDF,cities2,screenImage,params,Report.getSystemProperties());
-           
+           new Report().saveReport(filePDF, cities2,screenImage, params,Report.getSystemProperties());
+           TSP.openFile(filePDF);
            JOptionPane.showMessageDialog(parent.gui,"OK, report created to the file: \n"+filePDF,"Info",JOptionPane.INFORMATION_MESSAGE);
 
            //open the report file
@@ -927,39 +856,45 @@ public class TSPMenu {
    protected void setMenuProgramActionListeners() {
       menuItemExit.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             System.exit(0);
          }
       });
       menuItemStart.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionStart(e);
          }
       });
       menuItemPause.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionPause(e);
          }
       });
       menuItemPDFReport.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionPDFReport(e);
          }
       });
       
       menuItemXMLReport.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionXMLReport(null);
          }
       });
 
       menuItemXML2PDFReport.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionXML2PDFReport(e);
          }
       });
@@ -972,7 +907,8 @@ public class TSPMenu {
    protected void setMenuSettingsActionListeners() {
       menuItemPopulationSize.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             menuItemPDFReport.setEnabled(false);
             menuItemXMLReport.setEnabled(false);
             Integer value=intInputDialog("Initial population size",
@@ -985,7 +921,8 @@ public class TSPMenu {
       });
       menuItemPopulationGrow.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             menuItemPDFReport.setEnabled(false);
             menuItemXMLReport.setEnabled(false);
             Double value=doubleInputDialog(
@@ -999,7 +936,8 @@ public class TSPMenu {
       });
       menuItemMutationRatio.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             menuItemPDFReport.setEnabled(false);
             menuItemXMLReport.setEnabled(false);
             Double value=doubleInputDialog(
@@ -1013,7 +951,8 @@ public class TSPMenu {
       });
       menuItemMaxBestAge.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             menuItemPDFReport.setEnabled(false);
             menuItemXMLReport.setEnabled(false);
             Integer value=intInputDialog("Maximum best cost age",
@@ -1026,7 +965,8 @@ public class TSPMenu {
       });
       menuItemRMS.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             menuItemPDFReport.setEnabled(false);
             menuItemXMLReport.setEnabled(false);
             if(menuItemRMS.isSelected()) {
@@ -1066,7 +1006,8 @@ public class TSPMenu {
     	  if(m instanceof JMenuItem) {
 	         ((JMenuItem) m).addActionListener(new ActionListener() {
 	
-	            public void actionPerformed(ActionEvent e) {
+	            @Override
+		    public void actionPerformed(ActionEvent e) {
 	               menuItemPDFReport.setEnabled(false);
 	               menuItemXMLReport.setEnabled(false);
 	               JMenuItem menu=(JMenuItem) e.getSource();
@@ -1078,7 +1019,8 @@ public class TSPMenu {
       }
       menuItemExportMaps.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionExportMaps(e);
          }
       });
@@ -1090,25 +1032,14 @@ public class TSPMenu {
    protected void setMenuGraphicsActionListeners() {
       menuItemAntialiasing.addActionListener(new ActionListener() {
 
-         public void actionPerformed(ActionEvent e) {
+         @Override
+	public void actionPerformed(ActionEvent e) {
             actionAntialiasing(e);
          }
       });
    }
 
-   /**
-    * Menu item action listeners
-    */
-   protected void setMenuHelpActionListeners() {
-      menuItemAbout.addActionListener(new ActionListener() {
-
-         public void actionPerformed(ActionEvent e) {
-            actionAbout(e);
-         }
-      });  
-   }
-
-   
+  
    /**
     * Creates computation report to XML file 
     * @param XMLFileName fileName of output report, if NULL, then dialog will be displayed
@@ -1168,67 +1099,69 @@ public class TSPMenu {
             }
         }
 
-        PrintWriter report = new PrintWriter(fileXML.getAbsolutePath(),"UTF-8");
-        report.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        report.println();
-        
-        report.println("<tsp-report>");
-        
-        report.println(" <results>");
-        Map<String,String> params=Report.getResultInfo(parent);
-        Iterator keys=params.keySet().iterator();
-        while(keys.hasNext()) {
-           String key=(String)keys.next();
-           report.println("  <result name=\""+key+"\" value=\""+params.get(key)+"\"/>");
+        try (PrintWriter report = new PrintWriter(fileXML.getAbsolutePath(),"UTF-8"))
+        {
+            
+            report.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            report.println();
+            
+            report.println("<tsp-report>");
+            
+            report.println(" <results>");
+            Map<String,String> params=Report.getResultInfo(parent);
+            Iterator<String> keys=params.keySet().iterator();
+            while(keys.hasNext()) {
+               String key=keys.next();
+               report.println("  <result name=\""+key+"\" value=\""+params.get(key)+"\"/>");
+            }
+            report.println(" </results>");
+            
+            report.println(" <system-info>");
+            Map<String,String> info=Report.getSystemProperties();
+            keys=info.keySet().iterator();
+            while(keys.hasNext()) {
+               String key=keys.next();
+               report.println("  <info name=\""+key+"\" value=\""+info.get(key)+"\"/>");
+            }
+            report.println(" </system-info>");
+            
+            //reorder cities so the list starts and ends with the start city
+            City cities[]=parent.cities;
+            if(parent.bestChromosome!=null) {
+               cities=parent.bestChromosome.cities;
+            }
+            City cities2[]=new City[cities.length+1];
+            
+            int i;
+            int iStart=0;
+            //start cities from starting city
+            for(i=0; i<cities.length; i++) {
+               if(cities[i].startCity) {
+                  iStart=i;
+                  break;
+               }
+            }
+            
+            i=0;
+            while(i<cities.length) {
+               cities2[i]=cities[iStart];
+               iStart++;
+               i++;
+               if(iStart>=cities.length) 
+                  iStart=0;
+            }
+    
+            //add the start city again at the end
+            cities2[cities.length]=cities2[0];
+            
+            report.println(" <path>");
+            for(City city:cities2) {
+               report.println(" <city name=\""+city.name+"\" x=\""+city.SJTSKX+"\" y=\""+city.SJTSKY+"\"/>");
+            }
+            report.println(" </path>");
+            
+            report.print("</tsp-report>");
         }
-        report.println(" </results>");
-        
-        report.println(" <system-info>");
-        Map<String,String> info=Report.getSystemProperties();
-        keys=info.keySet().iterator();
-        while(keys.hasNext()) {
-           String key=(String)keys.next();
-           report.println("  <info name=\""+key+"\" value=\""+info.get(key)+"\"/>");
-        }
-        report.println(" </system-info>");
-        
-        //reorder cities so the list starts and ends with the start city
-        City cities[]=parent.cities;
-        if(parent.bestChromosome!=null) {
-           cities=parent.bestChromosome.cities;
-        }
-        City cities2[]=new City[cities.length+1];
-        
-        int i;
-        int iStart=0;
-        //start cities from starting city
-        for(i=0; i<cities.length; i++) {
-           if(cities[i].startCity) {
-              iStart=i;
-              break;
-           }
-        }
-        
-        i=0;
-        while(i<cities.length) {
-           cities2[i]=cities[iStart];
-           iStart++;
-           i++;
-           if(iStart>=cities.length) 
-              iStart=0;
-        }
-
-        //add the start city again at the end
-        cities2[cities.length]=cities2[0];
-        
-        report.println(" <path>");
-        for(City city:cities2) {
-           report.println(" <city name=\""+city.name+"\" x=\""+city.SJTSKX+"\" y=\""+city.SJTSKY+"\"/>");
-        }
-        report.println(" </path>");
-        
-        report.print("</tsp-report>");
-        report.close();
         
         if(!parent.configuration.console) {
             JOptionPane.showMessageDialog(parent.gui,"OK, report created to the file: \n"+fileXML,"Info",JOptionPane.INFORMATION_MESSAGE);
@@ -1257,7 +1190,7 @@ public class TSPMenu {
     * Creates PDF Report from previously saved XML report 
     * @param e
     */
-   protected void actionXML2PDFReport(@SuppressWarnings("unused") ActionEvent e) {
+   protected void actionXML2PDFReport(ActionEvent e) {
 	   
 	   /**
 	    * load XML report file
@@ -1286,8 +1219,8 @@ public class TSPMenu {
         });
       
       File fileXML=null;
-      Map<String,String> params=new LinkedHashMap<String,String>();
-      Map<String,String> info=new LinkedHashMap<String,String>();
+      Map<String,String> params=new LinkedHashMap<>();
+      Map<String,String> info=new LinkedHashMap<>();
       City path[]=null;
       BufferedImage screenImage=null; //screen image is also reconstructed from XML
       
@@ -1297,8 +1230,10 @@ public class TSPMenu {
             reportPrevDir=fileChooser.getCurrentDirectory();
             fileXML=fileChooser.getSelectedFile();
             
+            try(FileInputStream fileInputStream = new FileInputStream(fileXML)) {
+        	
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            Document document = factory.newDocumentBuilder().parse(new InputSource(new FileInputStream(fileXML)));
+            Document document = factory.newDocumentBuilder().parse(new InputSource(fileInputStream));
             
             Element root=document.getDocumentElement();
             //read result info
@@ -1337,7 +1272,8 @@ public class TSPMenu {
 	            	String y=attributes.getNamedItem("y").getNodeValue();
 	            	path[i]=new City(i,null,name,Integer.parseInt(x),Integer.parseInt(y));
 	            }
-            }            
+            }          
+            }
             
          } catch(Throwable ex) {
             ex.printStackTrace();
@@ -1468,86 +1404,4 @@ public class TSPMenu {
     	  return; //cancel pressed on PDF file dialog
       }
    }
-
-   /**
-    * Displays application help 
-    * @param e
-    */
-   protected void actionAbout(ActionEvent e) {
-	   BufferedReader reader=new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/org/saiko/ai/genetics/tsp/etc/about.html")));
-	   try {
-		   StringBuffer message=new StringBuffer();
-		   String line;
-		   while((line=reader.readLine())!=null) {
-			   message.append(line);
-			   message.append(" ");
-		   }		  
-		   reader.close();
-		   showHtmlDialog("About application", message.toString().replaceAll("__VERSION__",TSP.getAppVersion()));
-	   } catch (Exception ex) {
-		// nothing
-	   } 
-   }
-   
-	/**
-	 * Shows dialog with html content
-	 * @param title
-	 * @param htmlMessage
-	*/
-   protected void showHtmlDialog( String title, String htmlMessage) {
-	   //create new dialog
-	   final JDialog dlg=new JDialog(parent.gui);
-	   dlg.setSize(600,400);
-	   dlg.setTitle(title);
-	   dlg.setLayout(new BorderLayout());
-	   dlg.setComponentOrientation(parent.gui.getComponentOrientation());
-	   dlg.setLocationRelativeTo(parent.gui);
-	   dlg.setResizable(true);
-	   //create close button
-	   JButton ok=new JButton(" Close ");
-	   ok.addActionListener(new ActionListener(){
-		public void actionPerformed(ActionEvent e) {
-			dlg.dispose();
-		}});
-	   JPanel south=new JPanel();
-	   dlg.add(south,BorderLayout.SOUTH);
-	   south.add(ok);
-	   dlg.setModal(true);
-	   
-	   //create content center scrolling pane
-	   JScrollPane scrollPane=new JScrollPane();
-	   JEditorPane content=new JEditorPane("text/html",htmlMessage);
-	   content.setCaretPosition(0);
-	   content.setEditable(false);
-	   content.setBackground(null);
-	   content.setOpaque(true);
-	   content.addHyperlinkListener(createHyperLinkListener());
-	   scrollPane.getViewport().add(content);
-	   
-	   dlg.add(scrollPane,BorderLayout.CENTER);
-	   dlg.setVisible(true);
-	}
-   
-   
-   /**
-    * @return HyperlinkListener which transfers the requests to system
-   */
-   protected static HyperlinkListener createHyperLinkListener() { 
-	return new HyperlinkListener() { 
-	    public void hyperlinkUpdate(HyperlinkEvent e) {
-	    	if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-		    	String url=e.getURL().toExternalForm();
-	            try {
-	                Runtime.getRuntime().exec(new String[]{url});
-	             } catch(Throwable ex2) {
-	                try {
-	                   Runtime.getRuntime().exec(new String[]{"cmd.exe","/c","start",url});
-	                } catch(Throwable ex3) {
-	                   // nop
-	                }
-	             }	    		
-	    	}
-	    } 
-	}; 
-   }    
 }

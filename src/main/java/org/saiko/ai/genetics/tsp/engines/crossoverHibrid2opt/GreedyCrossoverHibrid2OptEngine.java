@@ -1,44 +1,14 @@
 /*
- * $Source: f:/cvs/prgm/tsp/src/org/saiko/ai/genetics/tsp/engines/crossoverHibrid2opt/GreedyCrossoverHibrid2OptEngine.java,v $
- * $Id: GreedyCrossoverHibrid2OptEngine.java,v 1.2 2005/08/23 23:18:04 dsaiko Exp $
- * $Date: 2005/08/23 23:18:04 $
- * $Revision: 1.2 $
- * $Author: dsaiko $
- *
- * Traveling Salesman Problem genetic algorithm.
- * This source is released under GNU public licence agreement.
- * dusan@saiko.cz
- * http://www.saiko.cz/ai/tsp/
- * 
- * Change log:
- * $Log: GreedyCrossoverHibrid2OptEngine.java,v $
- * Revision 1.2  2005/08/23 23:18:04  dsaiko
- * Finished.
- *
- * Revision 1.1  2005/08/22 22:13:52  dsaiko
- * Packages rearanged
- *
- * Revision 1.1  2005/08/22 22:08:51  dsaiko
- * Created engines with heuristics
- *
- * Revision 1.1  2005/08/13 15:02:09  dsaiko
- * build task
- *
- * Revision 1.1  2005/08/12 23:52:17  dsaiko
- * Initial revision created
- *
+ * Copyright (c) 2013 dusan.saiko@gmail.com
  */
-
 package org.saiko.ai.genetics.tsp.engines.crossoverHibrid2opt;
 
 import org.saiko.ai.genetics.tsp.City;
 import org.saiko.ai.genetics.tsp.TSPChromosome;
 import org.saiko.ai.genetics.tsp.engines.crossover.GreedyCrossoverEngine;
-import org.saiko.ai.genetics.tsp.engines.simpleUnisexMutatorHibrid2Opt.SimpleUnisexMutatorHibrid2OptEngine;
 
 /**
- * @author Dusan Saiko (dusan@saiko.cz)
- * Last change $Date: 2005/08/23 23:18:04 $
+ * @author dusan.saiko@gmail.com
  * 
  * Extends the GreedyCrossover engine by providing heuristics to extend greedy crossover mutation
  * 
@@ -54,10 +24,6 @@ import org.saiko.ai.genetics.tsp.engines.simpleUnisexMutatorHibrid2Opt.SimpleUni
  * @see org.saiko.ai.genetics.tsp.TSPEngine
  */
 public class GreedyCrossoverHibrid2OptEngine extends GreedyCrossoverEngine {
-
-   /** String containing the CVS revision. **/
-   @SuppressWarnings("hiding")
-   public final static String  CVS_REVISION = "$Revision: 1.2 $";
 
    
    /**
