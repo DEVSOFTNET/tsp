@@ -15,7 +15,7 @@ public class TSPConfiguration {
     * Antialiasing flag for graphics rendering.
     * Slows the displaying quite a lot.
     */
-   protected boolean antialiasing=false;
+   protected boolean antialiasing=true;
 
    /**
     * Initial population count which is set to the computation engine.
@@ -66,13 +66,6 @@ public class TSPConfiguration {
     */
    public boolean isAntialiasing() {
       return antialiasing;
-   }
-   
-   /**
-    * @param antialiasing Antialiasing flag for graphics rendering. Slows the displaying quite a lot.
-    */
-   public void setAntialiasing(boolean antialiasing) {
-      this.antialiasing=antialiasing;
    }
    
    /**

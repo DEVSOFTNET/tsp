@@ -34,7 +34,7 @@ public class TSPGui extends JFrame {
    /**
     * graphical window size. the window will be not resizable
     */
-   protected static final Dimension windowSize      =new Dimension(785,580);
+   protected static final Dimension windowSize      = new Dimension(1024,768);
 
    /**
     * Menu handler class
@@ -164,7 +164,7 @@ public class TSPGui extends JFrame {
     * Places map and status bar on the window
     */
    public void putComponents() {
-	  getContentPane().setBackground(Color.WHITE);
+      getContentPane().setBackground(Color.decode("#1c2e36"));
       getContentPane().setLayout(null);
       statusBar=new JTextField("Initializing ...");
       getContentPane().add(statusBar);
@@ -301,7 +301,7 @@ public class TSPGui extends JFrame {
            
            //paint the paths from best chromosome
            if(parent.bestChromosome!=null) {
-               g.setColor(Color.DARK_GRAY);
+               g.setColor(Color.WHITE);
                
                //draw the paths for the best chromozone
                City bestCities[]=parent.bestChromosome.cities;
@@ -366,9 +366,9 @@ public class TSPGui extends JFrame {
          };
          
          //set the color for city
-         Color color=Color.decode("0x00aa00");
+         Color color=Color.decode("0x009900");
          if(parent.cities[i].startCity) {
-            color=Color.decode("0xff0000");
+            color=Color.decode("0x990000"); 
             //helper - set some text for icon on the first city
             cityIcon.setText("FIRST"); 
          }
@@ -403,7 +403,7 @@ public class TSPGui extends JFrame {
 	         nameLabel.setBorder(null);
 	         nameLabel.setBackground(null);
 	         nameLabel.setOpaque(false);
-	         nameLabel.setForeground(Color.LIGHT_GRAY);
+	         nameLabel.setForeground(Color.decode("#646a63"));
 	        
 	         //center the label position
 	         Rectangle2D fm=font.getStringBounds(parent.cities[i].getName(),new FontRenderContext( this.getGraphicsConfiguration().getDefaultTransform(),false,true));

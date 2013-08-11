@@ -103,12 +103,6 @@ public class TSPMenu {
    protected final JCheckBoxMenuItem menuItemRMS=new JAntialiasedCheckBoxMenuItem();
 
    
-   /** menu GRAPHICS **/
-   protected final JMenu menuGraphics=new JAntialiasedMenu();
-   /** menu item **/
-   protected final JCheckBoxMenuItem menuItemAntialiasing=new JAntialiasedCheckBoxMenuItem();
-
-
    /** menu PRIORITY **/
    protected final JMenu menuPriority=new JAntialiasedMenu();
    /** menu item **/
@@ -202,15 +196,6 @@ public class TSPMenu {
          setMenuPriorityActionListeners();
       }
       
-      menuBar.add(menuGraphics);
-      {
-         menuGraphics.add(menuItemAntialiasing);
-
-         menuItemAntialiasing.setSelected(false);
-         
-         setMenuGraphicsActionListeners();
-      }
-      
       //set font for all menus
       Component components[]=menuBar.getComponents();
       for(Component c:components) {
@@ -257,10 +242,6 @@ public class TSPMenu {
          menuItemMutationRatio.setText(alignText("Mutation ratio:",parent.configuration.getMutationRatio()));
          menuItemMaxBestAge.setText(alignText("Max best age:",parent.configuration.getMaxBestCostAge()));
          menuItemRMS.setText("RMS cost");       
-      }
-      menuGraphics.setText("Grahics");
-      {
-         menuItemAntialiasing.setText("Antialiasing");
       }
 
       menuPriority.setText("Priority");
@@ -388,21 +369,6 @@ public class TSPMenu {
    
  
    
-   /**
-    * Menu item action
-    * @param e
-    */
-   protected void actionAntialiasing(ActionEvent e) {
-      JCheckBoxMenuItem menu=(JCheckBoxMenuItem)e.getSource();
-      if(menu.isSelected()) {
-         parent.configuration.setAntialiasing(true);
-      } else {
-         parent.configuration.setAntialiasing(false);
-      }
-      parent.gui.invalidate();
-      parent.gui.repaint();
-   }
-
    /**
     * Menu item action
     * @param e
@@ -1027,20 +993,6 @@ public class TSPMenu {
    }
 
    /**
-    * Menu item action listeners
-    */
-   protected void setMenuGraphicsActionListeners() {
-      menuItemAntialiasing.addActionListener(new ActionListener() {
-
-         @Override
-	public void actionPerformed(ActionEvent e) {
-            actionAntialiasing(e);
-         }
-      });
-   }
-
-  
-   /**
     * Creates computation report to XML file 
     * @param XMLFileName fileName of output report, if NULL, then dialog will be displayed
     */
@@ -1346,7 +1298,6 @@ public class TSPMenu {
             {
 	            TSP tsp2=new TSP(false);
 	            tsp2.cities=new City[path.length-1];
-	            tsp2.configuration.setAntialiasing(true);
 	            for(int i=0; i<tsp2.cities.length; i++) {
 	            	tsp2.cities[i]=path[i];
 	            	tsp2.cities[i].configuration=tsp2.configuration;

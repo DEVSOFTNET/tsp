@@ -11,7 +11,7 @@
 		<name>hijex.com</name>
 	</organization>
 
-	<version>1.0-1-g2da235e</version>
+	<version>1.0-2-gb10e463</version>
 	<name>tsp</name>
 	<url>http://fd.cvut.cz</url>
 
@@ -32,7 +32,7 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -107,6 +107,35 @@
 							<Implementation-Date>${maven.build.timestamp}</Implementation-Date>
 						</manifestEntries>
 					</archive>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>org.saiko.ai.genetics.tsp.TSP</mainClass>
+						</manifest>
+						<manifestEntries>
+							<Implementation-Date>${maven.build.timestamp}</Implementation-Date>
+						</manifestEntries>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
 				</configuration>
 			</plugin>
 		</plugins>
