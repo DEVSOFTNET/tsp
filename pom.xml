@@ -11,7 +11,7 @@
 		<name>hijex.com</name>
 	</organization>
 
-	<version>1.0</version>
+	<version>1.0-1-g2da235e</version>
 	<name>tsp</name>
 	<url>http://fd.cvut.cz</url>
 
@@ -101,12 +101,10 @@
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							<mainClass>com.javafx.main.Main</mainClass>
+							<mainClass>org.saiko.ai.genetics.tsp.TSP</mainClass>
 						</manifest>
 						<manifestEntries>
 							<Implementation-Date>${maven.build.timestamp}</Implementation-Date>
-							<JavaFX-Version>2.2</JavaFX-Version>
-							<JavaFX-Application-Class>com.hijex.pdf2xls.PDF2XLS</JavaFX-Application-Class>
 						</manifestEntries>
 					</archive>
 				</configuration>
