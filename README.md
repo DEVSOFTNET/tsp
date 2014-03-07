@@ -31,3 +31,5 @@ Simple map file formats, exporting existing maps, using external maps
 Descriptive XML and PDF reports, converting XML reports to PDF
 
 (c) 2006 Dusan Saiko
+
+![](http://www.saiko.cz/tsp.jpg)
