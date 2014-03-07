@@ -3,6 +3,8 @@ tsp
 
 Java Travelling Salesman
 
+![](http://www.saiko.cz/tsp.jpg)
+
 Traveling Salesman Problem - Java Genetic Algorithm Solution
 GPL v.3+
 
@@ -32,4 +34,4 @@ Descriptive XML and PDF reports, converting XML reports to PDF
 
 (c) 2006 Dusan Saiko
 
-![](http://www.saiko.cz/tsp.jpg)
+
