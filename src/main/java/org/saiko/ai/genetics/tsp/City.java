@@ -126,7 +126,15 @@ public class City {
 	int id2 = otherCity.id;
 	if (id1 == id2)
 	    return 0.0;
-
+	    
+	//verify this part of code.
+	//should be:
+	//if (id1 > id2) {
+	//    int swap = id1;
+	//    id1 = id2;
+	//    id2 = swap;
+	//}
+	
 	if (id1 > id2) {
 	    int swap = id1;
 	    id1 = id2;
